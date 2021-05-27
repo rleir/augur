@@ -92,9 +92,9 @@ def are_mutations_defined(node_attrs):
     return False
 
 
-def are_clades_defined(node_attrs):
+def is_clade_membership_defined(node_attrs):
     for node, data in node_attrs.items():
-        if data.get("clade_membership") or data.get("clade_annotation"):
+        if data.get("clade_membership"):
             return True
     return False
 
@@ -291,7 +291,7 @@ def set_colorings(data_json, config, command_line_colorings, metadata_names, nod
             colorings.insert(0,{'key':'gt'})
         if "num_date" not in explicitly_defined_colorings and are_dates_defined(node_attrs):
             colorings.insert(0,{'key':'num_date'})
-        if "clade_membership" not in explicitly_defined_colorings and are_clades_defined(node_attrs):
+        if "clade_membership" not in explicitly_defined_colorings and is_clade_membership_defined(node_attrs):
             colorings.insert(0,{'key':'clade_membership'})
 
         return colorings
@@ -851,6 +851,9 @@ def transfer_mutations_to_branches(node_attrs, branch_attrs):
                         branch_attrs[node_name]["labels"] = { "aa": aa_lab }
 
 def transfer_clade_annotation_to_branches(node_attrs, branch_attrs):
+    # NOTE: storing branch labels as `clade_annotation` is only possible
+    # using an older version of augur. (`augur clades` no longer uses this).
+    # This function should be removed upon the next major augur release (currently v12)
     for node_name, raw_data in node_attrs.items():
         if "clade_annotation" in raw_data and is_valid(raw_data["clade_annotation"]):
             if node_name not in branch_attrs:
