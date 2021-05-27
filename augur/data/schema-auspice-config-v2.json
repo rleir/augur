@@ -134,8 +134,7 @@
                     "enum": ["rect", "radial", "unrooted", "clock"]
                 },
                 "branch_label": {
-                    "type": "string",
-                    "enum": ["clade", "aa", "none"]
+                    "type": "string"
                 },
                 "transmission_lines": {
                     "type": "boolean"
