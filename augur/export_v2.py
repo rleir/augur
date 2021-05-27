@@ -228,6 +228,12 @@ def set_colorings(data_json, config, command_line_colorings, metadata_names, nod
                 warn("You've specified a color scale for {} but none of the values found on the tree had associated colors. Auspice will generate its own color scale for this trait.".format(key))
         return coloring
 
+    def _add_legend(coloring):
+        key = coloring["key"]
+        if config.get(key, {}).get("legend"): # NOTE: structure already validated by schema
+            coloring['legend'] = config[key]['legend']
+        return coloring
+
     def _add_title_and_type(coloring):
         key = coloring["key"]
         trait_values = get_values_across_nodes(node_attrs, key) # e.g. list of countries, regions etc
@@ -305,6 +311,8 @@ def set_colorings(data_json, config, command_line_colorings, metadata_names, nod
     colorings = [x for x in [_add_title_and_type(coloring) for coloring in colorings] if x]
     # for each coloring, if colors have been provided, save them as a "scale"
     colorings = [_add_color_scale(coloring) for coloring in colorings]
+    # for each coloring, pass-through the `legend` data from auspice_config.json, if provided
+    colorings = [_add_legend(coloring) for coloring in colorings]
     # save them to the data json to be exported
     data_json['meta']["colorings"] = colorings
 
